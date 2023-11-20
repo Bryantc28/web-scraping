@@ -28,12 +28,17 @@ def store(extracted):
         file.write(extracted + '\n')
 
 
+def read(extracted):
+    with open("data.txt", 'r') as file:
+        return file.read()
+
 if __name__ == "__main__":
     scraped = scrape(url)
     extracted = extract(scraped)
     print(extracted)
     store(extracted)
+    content = read(extracted)
     if extracted != "No upcoming tours":
-        if extracted not in "data.txt":
+        if extracted not in content:
             send_email()
 
