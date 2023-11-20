@@ -24,7 +24,7 @@ def send_email():
 
 
 def store(extracted):
-    with open("data.txt", 'w') as file:
+    with open("data.txt", 'a') as file:
         file.write(extracted + '\n')
 
 
@@ -36,3 +36,4 @@ if __name__ == "__main__":
     if extracted != "No upcoming tours":
         if extracted not in "data.txt":
             send_email()
+
