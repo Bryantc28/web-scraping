@@ -36,9 +36,9 @@ if __name__ == "__main__":
     scraped = scrape(url)
     extracted = extract(scraped)
     print(extracted)
-    store(extracted)
     content = read(extracted)
     if extracted != "No upcoming tours":
         if extracted not in content:
+            store(extracted)
             send_email()
 
