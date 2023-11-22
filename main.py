@@ -29,6 +29,7 @@ def extract(source):
 
 
 def send_email(message):
+    print("Email sent.")
     host = "smtp.gmail.com"
     port = 465
     username = "acaldezuniga@gmail.com"
@@ -42,8 +43,11 @@ def send_email(message):
 
 
 def store(extracted):
-    with open("data.txt", 'a') as file:
-        file.write(extracted + '\n')
+    row = extracted.split(',')
+    row = [item.strip() for item in row]
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO events VALUES(?,?,?)", row)
+    connection.commit()
 
 
 def read(extracted):
@@ -68,4 +72,4 @@ if __name__ == "__main__":
                 store(extracted)
                 send_email(message="Hey, new event was found!")
 
-        #time.sleep(2)
+        time.sleep(2)
