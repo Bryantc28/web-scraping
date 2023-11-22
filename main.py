@@ -1,13 +1,18 @@
+import time
 import requests
 import selectorlib
 import os
 import smtplib
 import ssl
+import sqlite3
 
 url = "https://programmer100.pythonanywhere.com/tours/"
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) '
                   'Chrome/39.0.2171.95 Safari/537.36'}
+
+connection = sqlite3.connect("database.db")
+cursor = connection.cursor()
 
 
 def scrape(url):
@@ -42,17 +47,25 @@ def store(extracted):
 
 
 def read(extracted):
-    with open("data.txt", 'r') as file:
-        return file.read()
+    row = extracted.split(',')
+    row = [item.strip() for item in row]
+    band, city, date = row
+    cursor.execute("SELECT * FROM events WHERE band=? AND city=? AND date=?", (band, city, date))
+    rows = cursor.fetchall()
+    print(rows)
+    return rows
 
 
 if __name__ == "__main__":
-    scraped = scrape(url)
-    extracted = extract(scraped)
-    print(extracted)
-    content = read(extracted)
-    if extracted != "No upcoming tours":
-        if extracted not in content:
-            store(extracted)
-            send_email(message="Hey, new event was found!")
+    while True:
+        scraped = scrape(url)
+        extracted = extract(scraped)
+        print(extracted)
 
+        if extracted != "No upcoming tours":
+            row = read(extracted)
+            if not row:
+                store(extracted)
+                send_email(message="Hey, new event was found!")
+
+        #time.sleep(2)
